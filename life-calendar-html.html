@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life in Weeks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .input-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 8px;
+            font-size: 16px;
+            width: 100px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .calendar {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-top: 20px;
+        }
+        .year-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .year-label {
+            width: 30px;
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            margin-right: 8px;
+        }
+        .weeks {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+        }
+        .week {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ddd;
+        }
+        .lived {
+            background-color: #007bff;
+        }
+        .stats {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Life in Weeks</h1>
+        <div class="input-section">
+            <input type="number" id="ageInput" min="0" max="80" step="0.1" placeholder="Your age">
+            <button onclick="visualize()">Visualize</button>
+        </div>
+        <div id="calendar" class="calendar"></div>
+        <div id="stats" class="stats"></div>
+    </div>
+
+    <script>
+        const WEEKS_IN_YEAR = 52;
+        const TOTAL_YEARS = 80;
+        const TOTAL_WEEKS = WEEKS_IN_YEAR * TOTAL_YEARS;
+
+        function visualize() {
+            const age = parseFloat(document.getElementById('ageInput').value);
+            if (isNaN(age) || age < 0 || age > 80) {
+                alert('Please enter a valid age between 0 and 80');
+                return;
+            }
+
+            const weeksLived = Math.floor(age * WEEKS_IN_YEAR);
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = '';
+
+            // Create calendar
+            for (let year = 0; year < TOTAL_YEARS; year++) {
+                const yearRow = document.createElement('div');
+                yearRow.className = 'year-row';
+
+                const yearLabel = document.createElement('div');
+                yearLabel.className = 'year-label';
+                yearLabel.textContent = year + 1;
+                yearRow.appendChild(yearLabel);
+
+                const weeksContainer = document.createElement('div');
+                weeksContainer.className = 'weeks';
+
+                for (let week = 0; week < WEEKS_IN_YEAR; week++) {
+                    const weekDot = document.createElement('div');
+                    weekDot.className = 'week';
+                    const weekIndex = year * WEEKS_IN_YEAR + week;
+                    if (weekIndex < weeksLived) {
+                        weekDot.classList.add('lived');
+                    }
+                    weekDot.title = `Year ${year + 1}, Week ${week + 1}`;
+                    weeksContainer.appendChild(weekDot);
+                }
+
+                yearRow.appendChild(weeksContainer);
+                calendar.appendChild(yearRow);
+            }
+
+            // Update stats
+            const weeksRemaining = TOTAL_WEEKS - weeksLived;
+            const percentageLived = ((weeksLived / TOTAL_WEEKS) * 100).toFixed(1);
+            const stats = document.getElementById('stats');
+            stats.innerHTML = `
+                <p>Weeks lived: ${weeksLived.toLocaleString()}</p>
+                <p>Weeks remaining: ${weeksRemaining.toLocaleString()}</p>
+                <p>Life percentage: ${percentageLived}%</p>
+            `;
+        }
+    </script>
+</body>
+</html>
